@@ -1,0 +1,53 @@
+name: asi_hrmc_from_melt
+
+init:
+  strategy: load_structure
+  structure_file: examples/data/asi_melt_512.xyz
+  seed: 44
+
+moves:
+  - type: translate_atom
+    weight: 1.0
+    params:
+      max_displacement: 0.15
+
+modalities:
+  - name: sq
+    target_file: examples/data/tsf_Xray_aSi.txt  # Laaziri et al., Phys. Rev. Lett. 82, 3460 (1999), doi:10.1103/PhysRevLett.82.3460
+    weight: 1.0
+    radiation: xray
+    forward_model: histogram_ft
+    q_min: 0.35
+    r_max: 10.9
+    q_max: 20.0
+    n_r: 700
+    window: none
+    convention: S
+    sigma: 0.02
+
+energetics:
+  enabled: true
+  source: upet
+  model: pet-mad
+  size: xs
+  version: 1.5.0
+  temperature: 873
+
+constraints:
+  default: 2.0
+  softening_window: 0.1
+  penalty_at_window: 1000.0
+
+engine:
+  kind: reverse_monte_carlo
+  n_conv_steps: 190000
+  convergence:
+    window: 10000
+    threshold: 0.002
+    patience: 5
+  production:
+    n_moves: 10000
+    n_configs: 20
+    save_interval: 500
+    trajectory_file: production_trajectory.xyz
+    restart_from: final

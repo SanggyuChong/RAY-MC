@@ -1,0 +1,87 @@
+name: ice_sq_combined_flexible
+
+init:
+  strategy: pack_on_lattice
+  molecule: water
+  n_particles: 500
+  cell: [25.2, 25.2, 25.2]
+  pbc: [true, true, true]
+  seed: 42
+  equilibrate:
+    n_steps: 100000
+    max_displacement: 0.8
+    default: 1.0
+    pairs:
+      - elements: [O, O]
+        distance: 2.4
+      - elements: [O, H]
+        distance: 1.5
+      - elements: [H, H]
+        distance: 1.8
+
+moves:
+  - type: translate_atom
+    weight: 1.0
+    params:
+      max_displacement: 0.3
+
+modalities:
+  - name: sq
+    label: sq_xray
+    target_file: examples/data/tsf_Xray_LDA.txt  # Bizid et al., J. Chem. Phys. 87, 2225 (1987), doi:10.1063/1.453149
+    weight: 1.0
+    radiation: xray
+    forward_model: histogram_ft
+    q_min: 0.3
+    q_max: 16.0
+    n_r: 500
+    window: lorch
+    convention: S
+    sigma: 0.02
+  - name: sq
+    label: sq_neutron
+    target_file: examples/data/tsf_neutron_LDA.txt  # Bellissent-Funel et al., J. Chem. Phys. 87, 2231 (1987), doi:10.1063/1.453150
+    weight: 1.0
+    radiation: neutron
+    forward_model: histogram_ft
+    species_weights: {H: 6.671}
+    q_min: 0.3
+    q_max: 16.0
+    n_r: 500
+    window: lorch
+    convention: S
+    sigma: 0.02
+    data_scale: 3.0
+
+constraints:
+  default: 1.0
+  softening_window: 0.1
+  penalty_at_window: 1.0e12
+  intramolecular:
+    - elements: [O, H]
+      min: 0.9
+      max: 1.1
+    - elements: [H, H]
+      min: 1.5
+      max: 1.65
+  pairs:
+    - elements: [O, O]
+      distance: 2.4
+    - elements: [O, H]
+      distance: 0.9
+    - elements: [H, H]
+      distance: 1.1
+
+engine:
+  kind: reverse_monte_carlo
+  n_conv_steps: 1000000
+  convergence:
+    window: 100000
+    threshold: 0.01
+    patience: 5
+  production:
+    n_moves: 150000
+    n_configs: 50
+    save_interval: 3000
+    trajectory_file: production_trajectory.xyz
+    restart_from: final
