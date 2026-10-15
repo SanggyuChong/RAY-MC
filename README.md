@@ -1,6 +1,6 @@
 # RAY-MC
 
-RAY-MC is an open-source package for ML-driven reverse Monte Carlo (RMC)
+RAY-MC is an open-source package to run ML-driven reverse Monte Carlo (RMC)
 and hybrid RMC simulations for atomic-scale structural resolution from
 experimental data, developed and maintained by Sanggyu "Raymond" Chong.
 Core of the code was developed as part of his Eric and Wendy Schmidt AI in
